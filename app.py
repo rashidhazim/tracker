@@ -9,9 +9,18 @@ server = 'INA.MCKESSON.COM'
 database = 'INA'
 username = 'INA_TEAM'
 password = 'ISMCAccount'
-cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+
+# Initialize connection.
+# Uses st.cache to only run once.
+@st.cache(hash_funcs={pyodbc.Connection: id}, allow_output_mutation=True)
+def init_connection():
+    return pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
+
+conn = init_connection()
 
 # Create a function to load data from SQL Server
+# Uses st.cache to only rerun when the query changes or after 10 min.
+@st.cache(ttl=600)
 def load_data():
     query = """
     SELECT * 
@@ -38,7 +47,7 @@ def load_data():
                            CAST(NOTES AS VARCHAR(50)) AS NOTES 
                    FROM ANALYTICS.CURRENT_DISCREPANCIES')
     """
-    data = pd.read_sql(query, cnxn)
+    data = pd.read_sql(query, conn)
     return data
 
 # Load data
