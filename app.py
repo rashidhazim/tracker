@@ -9,7 +9,7 @@ server = 'INA.MCKESSON.COM'
 database = 'INA'
 username = 'INA_TEAM'
 password = 'ISMCAccount'
-cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 
 # Create a function to load data from SQL Server
 def load_data():
