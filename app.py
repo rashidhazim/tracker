@@ -14,13 +14,13 @@ password = 'ISMCAccount'
 # Uses st.cache to only run once.
 @st.cache(hash_funcs={pyodbc.Connection: id}, allow_output_mutation=True)
 def init_connection():
-    return pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
+    conn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + username + ';PWD=' + password)
+    conn.timeout = 0  # Set query timeout to wait forever
+    return conn
 
 conn = init_connection()
 
 # Create a function to load data from SQL Server
-# Uses st.cache to only rerun when the query changes or after 10 min.
-@st.cache(ttl=600)
 def load_data():
     query = """
     SELECT * 
